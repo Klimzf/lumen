@@ -4,6 +4,7 @@ namespace App\Domains\Note\Models;
 
 use App\Domains\Note\Enums\NoteImportance;
 use App\Models\User;
+use App\Domains\Tag\Models\Tag;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +41,12 @@ class Note extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(
+            Tag::class,
+            'note_tag',
+            'note_id',
+            'tag_id'
+        );
     }
 
     protected function title(): Attribute
