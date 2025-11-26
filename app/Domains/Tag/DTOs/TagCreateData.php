@@ -15,7 +15,6 @@ class TagCreateData
     {
         return new self(
             name: $data['name'],
-            user_id: $data['user_id']
         );
     }
 }
