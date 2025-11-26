@@ -4,7 +4,8 @@ namespace App\Domains\Note\Repositories;
 
 use App\Domains\Note\Exceptions\NoteNotFoundException;
 use App\Domains\Note\Models\Note;
-use App\Domains\Note\Models\Tag;
+use App\Domains\Tag\Models\Tag;
+use App\Domains\Note\Interfaces\NoteRepositoryInterface;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
