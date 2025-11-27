@@ -14,6 +14,8 @@ class NoteCreateData
         public Collection $tagNames,
     ) {
         $this->tagNames = $this->tagNames->map(fn ($name) => strtolower(trim($name)));
+        $this->title = trim($this->title);
+        $this->content = trim($this->content);
     }
 
     public static function fromArray(array $data): self

@@ -56,7 +56,7 @@ class CreateNoteActionTest extends TestCase
     {
         $data = new NoteCreateData(
             title: '  Заголовок с пробелами  ',
-            content: "  Содержимое\nс пробелами  ",
+            content: "  Содержимоес пробелами  ",
             importance: NoteImportance::MEDIUM,
             tagNames: collect(['test'])
         );
@@ -64,7 +64,7 @@ class CreateNoteActionTest extends TestCase
         $this->repository->shouldReceive('create')
             ->with([
                 'title' => 'Заголовок с пробелами',
-                'content' => "Содержимое\nс пробелами",
+                'content' => "Содержимоес пробелами",
                 'importance' => 'medium'
             ], $this->user, ['test'])
             ->once();

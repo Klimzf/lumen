@@ -7,7 +7,7 @@ use App\Domains\Note\Exceptions\NoteNotFoundException;
 use App\Domains\Note\Interfaces\NoteRepositoryInterface;
 use App\Models\User;
 
-class UPdatNoteAction
+class UpdateNoteAction
 {
     public function __construct(private NoteRepositoryInterface $noteRepository) {}
 
