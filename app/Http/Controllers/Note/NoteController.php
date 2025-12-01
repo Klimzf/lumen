@@ -18,12 +18,34 @@ use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
+    public function __construct(
+        private ListNotesForUserAction $listNotesForUserAction,
+        private CreateNoteAction       $createNoteAction,
+        private UpdateNoteAction       $updateNoteAction,
+    )
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $notes = $this->listNotesForUserAction->execute(
+            user: auth()->user(),
+            includeArchived: \request('archived') === 'true'
+        );
+
+        return Inertia::render('Notes/Index', [
+            'notes' => $notes,
+            'filters' => [
+                'search' => \request('search', ''),
+                'importance' => \request('importance', ''),
+                'tag' => \request('tag', ''),
+                'archived' => \request('archived', false) === 'true',
+            ],
+            'importanceOptions' => $this->getImportanceOptions(),
+        ]);
     }
 
     /**
@@ -31,7 +53,9 @@ class NoteController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Notes/Create', [
+            'importanceOptions' => $this->getImportanceOptions(),
+        ]);
     }
 
     /**
@@ -39,7 +63,12 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = NoteCreateData::fromArray($request->validated());
+
+        $this->createNoteAction->execute($data, auth()->user());
+
+        return redirect()->route('notes.index')
+            ->with('success', 'Записка успешно создана!');
     }
 
     /**
@@ -55,7 +84,12 @@ class NoteController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $note = auth()->user()->notes()->findOrFail($id);
+
+        return Inertia::render('Notes/Edit', [
+            'note' => $note,
+            'importanceOptions' => $this->getImportanceOptions(),
+        ]);
     }
 
     /**
@@ -63,7 +97,14 @@ class NoteController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $note = auth()->user()->notes()->findOrFail($id);
+
+        $data = NoteUpdateData::fromArray($request->validated());
+
+        $this->updateNoteAction->execute($note->id, $data, auth()->user());
+
+        return redirect()->route('notes.index')
+            ->with('success', 'Записка успешно обновлена!');
     }
 
     /**
@@ -72,5 +113,16 @@ class NoteController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function getImportanceOptions(): array
+    {
+        return collect(NoteImportance::cases())->map(function (NoteImportance $noteImportance) {
+            return [
+                'value' => $noteImportance->value,
+                'label' => $noteImportance->label(),
+                'color' => $noteImportance->color(),
+            ];
+        })->toArray();
     }
 }
